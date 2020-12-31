@@ -1,0 +1,62 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Weather Check";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Check the Weather</h1>
+
+    <p>
+        <label>By ZIP:</label>
+        <input type="text" id="ZIP" />
+        <button onclick="callApi('zip')">Check</button>
+    </p>
+    
+    <p>
+        <label>By City:</label>
+        <input type="text" id="City" />
+        <button onclick="callApi('city')">Check</button>
+    </p>
+
+    <p>
+        The current temperature is: <span id="Result"></span>° <span id="Units"></span>
+    </p>
+</div>
+
+<script>
+    //TODO move to .js file
+
+    let nodes = {};
+    (getNodes => {
+        nodes.ZIP = document.getElementById('ZIP');
+        nodes.City = document.getElementById('City');
+        nodes.Result = document.getElementById('Result');
+        nodes.Units = document.getElementById('Units');
+    })();
+
+    function callApi(type) {
+        debugger;
+        //TODO cancel on null input
+        let node = (type === 'zip') ? nodes.ZIP : nodes.City;
+
+        //TODO replace with a library that handles network errors etc
+        xhr = new XMLHttpRequest();
+        xhr.open('GET', `/api/${type}/${node.value}`);
+        xhr.send();
+
+        xhr.onreadystatechange = function () {
+            debugger;
+            //if (xhr.readyState === 4) { //done
+                if (xhr.status === 200) {   //OK
+                    console.log(xhr.responseText); // 'This is the returned text.'
+                    nodes.Result.innerText = xhr.responseText;
+                    nodes.Units.innerText = (type === 'zip') ? 'F' : 'C';
+                } else {
+                    console.log('Error: ' + xhr.status); // An error occurred during the request.
+                }
+            //}
+        };
+    }
+
+</script>
